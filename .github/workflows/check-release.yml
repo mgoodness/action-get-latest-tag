@@ -9,13 +9,15 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
 
-      - uses: actions-ecosystem/action-release-label@v1
+      - uses: mgoodness/action-release-label@v1.3.3
         id: release-label
         if: ${{ startsWith(github.event.label.name, 'release/') }}
 
-      - uses: actions-ecosystem/action-get-latest-tag@v1
+      - uses: mgoodness/action-get-latest-tag@v1
         id: get-latest-tag
         if: ${{ steps.release-label.outputs.level != null }}
         with:

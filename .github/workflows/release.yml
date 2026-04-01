@@ -1,29 +1,27 @@
 name: Create Release
 
 on:
-  push:
+  pull_request_target:
     branches:
       - main
+    types:
+      - closed
 
 jobs:
   release:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions-ecosystem/action-get-merged-pull-request@v1
-        id: get-merged-pull-request
+      - uses: actions/checkout@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          show-progress: false
 
-      - uses: actions-ecosystem/action-release-label@v1
+      - uses: mgoodness/action-release-label@v1.3.3
         id: release-label
-        if: ${{ steps.get-merged-pull-request.outputs.title != null }}
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          labels: ${{ steps.get-merged-pull-request.outputs.labels }}
+          labels: ${{ join(github.event.pull_request.labels.*.name, ' ') }}
 
-      - uses: actions-ecosystem/action-get-latest-tag@v1
+      - uses: mgoodness/action-get-latest-tag@v1
         id: get-latest-tag
         if: ${{ steps.release-label.outputs.level != null }}
         with:
